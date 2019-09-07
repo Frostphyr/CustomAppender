@@ -141,10 +141,10 @@ public class CustomAppender extends AbstractAppender {
 			@PluginElement("Filter") Filter filter,
 			@PluginElement("Layout") Layout<? extends Serializable> layout) {
 		if (name == null) {
-			LOGGER.error("Appender must have name");
+			LOGGER.error("CustomAppender must specify a name");
 			return null;
 		} else if (className == null) {
-			LOGGER.error("CustomAppender must have a specified class");
+			LOGGER.error("CustomAppender must specify a class");
 			return null;
 		} else if (layout == null) {
 			layout = PatternLayout.createDefaultLayout();
@@ -156,6 +156,11 @@ public class CustomAppender extends AbstractAppender {
 			if (appendInstance != null) {
 				if (cacheInstance) {
 					Object instance = clazz.getDeclaredMethod(appendInstance).invoke(null);
+					if (instance == null) {
+						LOGGER.error("appendInstance cannot return null");
+						return null;
+					}
+					
 					invoker = new CachedAppendInvoker(instance, instance.getClass().getDeclaredMethod(append, String.class));
 				} else {
 					invoker = new ReacquireAppendInvoker(clazz.getDeclaredMethod(appendInstance), append);
@@ -164,8 +169,8 @@ public class CustomAppender extends AbstractAppender {
 				invoker = new CachedAppendInvoker(null, clazz.getDeclaredMethod(append, String.class));
 			}
 			return new CustomAppender(name, filter, layout, invoker);
-		} catch (ReflectiveOperationException e) {
-			LOGGER.error("Error creating CustomAppender: " + e);
+		} catch (Exception e) {
+			LOGGER.error("Error creating CustomAppender", e);
 			return null;
 		}
 	}
@@ -175,7 +180,7 @@ public class CustomAppender extends AbstractAppender {
 		try {
 			invoker.append(toString(event));
 		} catch (Exception e) {
-			LOGGER.error("Error invoking append: " + e);
+			LOGGER.error("Error invoking append method", e);
 		}
 	}
 	

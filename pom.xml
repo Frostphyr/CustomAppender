@@ -3,7 +3,7 @@
   
   <groupId>com.frostphyr</groupId>
   <artifactId>customappender</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   
   <name>CustomAppender</name>
   <description>Easily create your own Log4j appender</description>

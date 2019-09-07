@@ -14,7 +14,7 @@ It can be downloaded with Maven with the following dependency or directly from t
 <dependency>
   <groupId>com.frostphyr</groupId>
   <artifactId>customappender</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 
