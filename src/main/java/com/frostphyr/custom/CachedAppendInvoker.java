@@ -49,7 +49,7 @@ public class CachedAppendInvoker implements AppendInvoker {
 	}
 
 	@Override
-	public void append(String text) throws ReflectiveOperationException {
+	public void append(String text) throws Exception {
 		method.invoke(instance, text);
 	}
 

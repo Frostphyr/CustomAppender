@@ -31,6 +31,6 @@ public interface AppendInvoker {
 	 * @param text The text to pass to the append method as a parameter.
 	 * @throws ReflectiveOperationException If any reflection fails.
 	 */
-	void append(String text) throws ReflectiveOperationException;
+	void append(String text) throws Exception;
 
 }

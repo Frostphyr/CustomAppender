@@ -55,7 +55,7 @@ public class ReacquireAppendInvoker implements AppendInvoker {
 	}
 
 	@Override
-	public void append(String text) throws ReflectiveOperationException {
+	public void append(String text) throws Exception {
 		Object instance = instanceMethod.invoke(null);
 		instance.getClass().getDeclaredMethod(append, String.class).invoke(instance, text);
 	}
