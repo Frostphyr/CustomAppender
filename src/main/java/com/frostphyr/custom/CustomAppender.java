@@ -25,6 +25,7 @@ import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.StringLayout;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.appender.AppenderLoggingException;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
@@ -85,6 +86,14 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
  *     {@code appendInstance} is not specified, this has no effect. It 
  *     defaults to {@code true}.</td>
  *   </tr>
+ *   <tr>
+ *     <td>ignoreExceptions</td>
+ *     <td></td>
+ *     <td>boolean</td>
+ *     <td>If {@code false}, exceptions while appending events will be 
+ *     propagated to the caller. If {@code true}, exceptions will instead be 
+ *     internally logged and then ignored. It defaults to {@code true}.</td>
+ *   </tr>
  * </table>
  * 
  * It also supports Log4j {@link Filter}s and {@link Layout}s.
@@ -97,8 +106,8 @@ public class CustomAppender extends AbstractAppender {
 	
 	private AppendInvoker invoker;
 	
-	private CustomAppender(String name, Filter filter, Layout<? extends Serializable> layout, AppendInvoker invoker) {
-		super(name, filter, layout, true, null);
+	private CustomAppender(String name, boolean ignoreExceptions, Filter filter, Layout<? extends Serializable> layout, AppendInvoker invoker) {
+		super(name, filter, layout, ignoreExceptions, null);
 		
 		this.invoker = invoker;
 	}
@@ -122,6 +131,10 @@ public class CustomAppender extends AbstractAppender {
 	 * from {@code appendInstance} every time {@code append} is invoked. If 
 	 * {@code appendInstance} is not specified, this has no effect. It 
 	 * defaults to {@code true}.
+	 * @param ignoreExceptions If {@code false}, exceptions while appending 
+	 * events will be propagated to the caller. If {@code true}, exceptions 
+	 * will instead be internally logged and then ignored. It defaults to 
+	 * {@code true}.
 	 * @param filter The {@code Filter} that determines which messages to log. 
 	 * If {@code null}, all messages will be logged.
 	 * @param layout The {@code Layout} that formats the log messages. If 
@@ -138,6 +151,7 @@ public class CustomAppender extends AbstractAppender {
 			@PluginAttribute(value = "append", defaultString = "append") String append,
 			@PluginAttribute("appendInstance") String appendInstance,
 			@PluginAttribute(value = "cacheInstance", defaultBoolean = true) boolean cacheInstance,
+			@PluginAttribute(value = "ignoreExceptions", defaultBoolean = true) boolean ignoreExceptions,
 			@PluginElement("Filter") Filter filter,
 			@PluginElement("Layout") Layout<? extends Serializable> layout) {
 		if (name == null) {
@@ -168,7 +182,7 @@ public class CustomAppender extends AbstractAppender {
 			} else {
 				invoker = new CachedAppendInvoker(null, clazz.getDeclaredMethod(append, String.class));
 			}
-			return new CustomAppender(name, filter, layout, invoker);
+			return new CustomAppender(name, ignoreExceptions, filter, layout, invoker);
 		} catch (Exception e) {
 			LOGGER.error("Error creating CustomAppender", e);
 			return null;
@@ -181,6 +195,7 @@ public class CustomAppender extends AbstractAppender {
 			invoker.append(toString(event));
 		} catch (Exception e) {
 			LOGGER.error("Error invoking append method", e);
+			throw new AppenderLoggingException(e);
 		}
 	}
 	
