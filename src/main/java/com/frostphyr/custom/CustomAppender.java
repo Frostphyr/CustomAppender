@@ -18,12 +18,9 @@ package com.frostphyr.custom;
 
 import java.io.Serializable;
 
-import org.apache.logging.log4j.core.Appender;
-import org.apache.logging.log4j.core.Core;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.StringLayout;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.appender.AppenderLoggingException;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
@@ -101,13 +98,13 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
  * @author Jon Mannerberg
  * @since 1.0
  */
-@Plugin(name = "Custom", category = Core.CATEGORY_NAME, elementType = Appender.ELEMENT_TYPE, printObject = true)
+@Plugin(name = "Custom", category = "Core", elementType = "appender", printObject = true)
 public class CustomAppender extends AbstractAppender {
 	
 	private AppendInvoker invoker;
 	
 	private CustomAppender(String name, boolean ignoreExceptions, Filter filter, Layout<? extends Serializable> layout, AppendInvoker invoker) {
-		super(name, filter, layout, ignoreExceptions, null);
+		super(name, filter, layout, ignoreExceptions);
 		
 		this.invoker = invoker;
 	}
@@ -192,18 +189,11 @@ public class CustomAppender extends AbstractAppender {
 	@Override
 	public void append(LogEvent event) {
 		try {
-			invoker.append(toString(event));
+			invoker.append(new String(getLayout().toByteArray(event)));
 		} catch (Exception e) {
 			LOGGER.error("Error invoking append method", e);
 			throw new AppenderLoggingException(e);
 		}
-	}
-	
-	private String toString(LogEvent event) {
-		Layout<?> layout = getLayout();
-		return layout instanceof StringLayout ?
-				((StringLayout) layout).toSerializable(event) :
-				new String(layout.toByteArray(event));
 	}
 
 }

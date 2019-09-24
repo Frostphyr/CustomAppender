@@ -6,9 +6,15 @@ CustomAppender is a Log4j2 appender that allows you to log however you want.
 
 CustomAppender is licensed under [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
+## Dependencies
+
+CustomAppender requires at least Java SE 6 or 7, depending on which version of [Log4j2](https://logging.apache.org/log4j/2.x/) is used. Version 2.4 and greater require 7 and versions less than 2.4 require 6. The minimum supported version of Log4j2 is 2.0.1.
+
 ## Download
 
-It can be downloaded with Maven with the following dependency or directly from the the website [here](http://frostphyr.com/custom-appender).
+It can be downloaded with one of the following methods or directly from the website [here](http://frostphyr.com/custom-appender).
+
+### Maven
 
 ```xml
 <dependency>
@@ -16,6 +22,18 @@ It can be downloaded with Maven with the following dependency or directly from t
   <artifactId>customappender</artifactId>
   <version>1.1.0</version>
 </dependency>
+```
+
+### Gradle
+
+```gradle
+repositories {
+  mavenCentral()
+}
+```
+
+```gradle
+implementation 'com.frostphyr:customappender:1.1.0'
 ```
 
 ## Manual
