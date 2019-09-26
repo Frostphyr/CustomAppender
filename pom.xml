@@ -5,6 +5,10 @@
   <artifactId>customappender</artifactId>
   <version>1.1.0</version>
   
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  
   <name>CustomAppender</name>
   <description>Easily create your own Log4j appender</description>
   <url>http://frostphyr.com/custom-appender</url>
